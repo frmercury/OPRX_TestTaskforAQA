@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Base functionality" verbose="1" >
+    <test name="Smoke">
+        <packages>
+            <package name="tests.ui.BasicFuncTest"/>
+        </packages>
+    </test>
+</suite>

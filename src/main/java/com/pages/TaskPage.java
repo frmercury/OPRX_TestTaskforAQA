@@ -1,56 +1,91 @@
 package com.pages;
 
-import org.assertj.core.api.Assertions;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import com.helpers.WebHelpers;
+import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Random;
+
+import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class TaskPage extends BasePage {
 
+    protected Logger log = LoggerFactory.getLogger(TaskPage.class);
+
     public TaskPage(WebDriver driver) {
         super(driver);
     }
 
+    EditListPage editListPage = new EditListPage(driver);
+
     private final By taskTable = (By.xpath("//table[@id = 'tasktable']"));
-    private final By createYourDailyTodolist = (By.xpath("//table[@id = 'tasktable']//input"));
-    private final By taskListTitle = (By.xpath("//input[@name = 'title']"));
-    private final By title = (By.xpath("//tr/td[1]"));
-    private final By taskListTextArea = (By.xpath("//textarea"));
-    private final By submitButton = (By.xpath("//input[@type = 'submit']"));
-    private final By editTaskListButton = (By.xpath("//a[text() = 'Edit']"));
+    private final By listOfToDo = (By.xpath("//table[@id = 'tasktable']//tr"));
+    private final By checkBoxes = (By.xpath("//table[@id = 'tasktable']//input"));
+    private final By title = (By.xpath("//*[@id = 'headline']"));
+    private final By editListButton = (By.xpath("//a[text() = 'Edit']"));
 
+    public static int initialListSize;
 
-    String testText = "First task \nSecond Task \nThird Task";
-    String changedText = "First task \nSecond Task \nThird Task\n4th Task";
-    String titleText = "Test Task List";
-
-
-    public TaskPage createTaskList() {
-
-
-        driver.findElement(taskListTextArea).sendKeys(testText);
-        driver.findElement(submitButton).click();
-        assertThat(driver.findElement(taskTable).isDisplayed());
-
-        return this;
-
+    @Step("Edit previously created ToDo list")
+    public EditListPage clickEditButton() {
+        getListOfToDo();
+        step("Click on Edit button");
+        driver.findElement(editListButton).click();
+        return new EditListPage(driver);
     }
 
-    public TaskPage editTaskList() {
-        driver.findElement(editTaskListButton).click();
-        driver.findElement(taskListTitle).clear();
-        driver.findElement(taskListTitle).sendKeys(titleText);
-        driver.findElement(taskListTextArea).sendKeys(changedText);
-        driver.findElement(submitButton).click();
+    @Step("Check if the changes have been applied")
+    public TaskPage checkEditing() {
 
         assertThat(driver.findElement(taskTable).isDisplayed());
-        assertThat(driver.findElement(title).getText()).isEqualTo(titleText);
+        step("Title should be changed");
+        assertThat(driver.findElement(title).getText().replace(" Edit", "")).isEqualTo(editListPage.getTestTitle());
+        log.info("Title has been changed");
+        step("ToDo List should be changed");
+        assertThat(driver.findElements(listOfToDo).size()).isNotEqualTo(initialListSize);
+        log.info("ToDo List has been changed");
+        return this;
+    }
 
-        System.out.println();
+    private int getListOfToDo(){
+        initialListSize = driver.findElements(listOfToDo).size();
+        return initialListSize;
+    }
 
+    @Step("Checkbox status check")
+    public TaskPage checkBoxStatusCheck() {
+        checkToDoBox(getCheckBoxStatus());
+        return this;
+    }
+
+    @Step("Change random checkbox status")
+    public void checkToDoBox(List<WebElement> list) {
+        Random rnd = new Random();
+        WebElement randomCheckBox = list.get(rnd.nextInt(list.size()));
+        step("Click random checkbox");
+        randomCheckBox.click();
+        log.info("Click random checkbox");
+        assertThat(randomCheckBox.getAttribute("style")).isEqualTo("display: none;");
+        log.info("Checkbox status has changed successfully");
+    }
+
+    @Step("Get ToDo checkboxes")
+    private List<WebElement> getCheckBoxStatus (){
+        int listSize = driver.findElements(listOfToDo).size();
+        log.info(String.format("We have %s todo tasks", listSize));
+        return driver.findElements(checkBoxes);
+    }
+
+    @Step("List of tasks should be created")
+    public TaskPage taskListIsCreated(){
+        assertThat(driver.findElement(taskTable).isDisplayed());
+        log.info("Task list is created successfully");
         return this;
     }
 }

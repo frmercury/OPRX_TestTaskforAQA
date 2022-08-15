@@ -2,26 +2,44 @@ package tests.ui.BasicFuncTest;
 
 import com.pages.MainPage;
 import com.pages.TaskPage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.testng.annotations.Test;
 import tests.BaseTest;
 
-import static com.codeborne.selenide.Configuration.baseUrl;
-import static java.lang.Thread.sleep;
-
 public class SmokeTest extends BaseTest {
 
-    protected Logger log = LoggerFactory.getLogger(SmokeTest.class);
+@Feature("Base functionality")
 
-    @Test
-    public void firstTest() throws InterruptedException {
-        log.info("Open main page");
+    @Story("Create new ToDoList")
+    @Test(testName = "ToDo list creation", priority = 1)
+    public void toDoListCreationTest() {
+
         new MainPage(driver)
                 .openMainPage()
-                .clickCreateYourDailyTodolistButton();
-        new TaskPage(driver)
+                .clickCreateTodolistButton()
+                .createPageIsOpened()
                 .createTaskList()
-                .editTaskList();
+                .taskListIsCreated();
+    }
+
+    @Story("ToDo list edition")
+    @Test(testName = "ToDo list edition", priority = 2)
+    public void toDoListEditionTest() {
+
+        new TaskPage(driver)
+                .clickEditButton()
+                .editTitle()
+                .editTaskList()
+                .clickAtSubmitButton()
+                .checkEditing();
+    }
+
+    @Story("Checkbox status should be changed")
+    @Test(testName = "Checkbox status modification", priority = 3)
+    public void checkBoxModificationTest() {
+
+        new TaskPage(driver)
+                .checkBoxStatusCheck();
     }
 }
