@@ -1,0 +1,42 @@
+1.
+Title: Creation of a new tasks list
+
+Steps to reproduce:
+1.Open main page https://dailytodo.org;
+2.Click createTodolistButton;
+3.The task page is opened;
+4.Fill up text area with a test tasks list;
+5.Click at "Save tasks" button;
+
+Expected result:
+ToDolist is successfully created.
+
+2.
+Title: Editing of existing Todo list
+
+Precondition: Todo list is created
+
+Steps to reproduce:
+1.The task page is opened;
+2.Click at the "Edit" button;
+3.Erase default title;
+4.Fill up the test title;
+5.Erase existing todo list;
+6.Fill up test todo list;
+7.Click at the "Save tasks" button;
+
+Expected result:
+The title should be visible and equal to test title;
+ToDo list should be visible and equal to test list tasks;
+
+3.
+Title: Checkbox status modification
+
+Precondition: Todo list is created
+
+Steps to reproduce:
+1.The task page is opened;
+2.Сhange random checkbox status;
+
+Expected result:
+Checkbox value: style should be equal to "display: none;"
